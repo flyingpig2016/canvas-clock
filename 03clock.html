@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>clock</title>
+        <style media="screen">
+            #clock{background: #636051;}
+        </style>
+    </head>
+    <body>
+        <canvas id="clock" width="500" height="500">
+            您的浏览器不支持canvas
+        </canvas>
+    </body>
+    <script type="text/javascript">
+        var clock = document.getElementById('clock');
+        var cxt = clock.getContext('2d');
+        function drawClock(){
+            var now = new Date();
+            var hours = now.getHours();
+            var minute = now.getMinutes();
+            var sec = now.getSeconds();
+            //转换24小时进制转换为12小时进制
+            hours = hours>12 ? hours-12 : hours;
+            //画图之前先清除画布
+            cxt.clearRect(0,0,500,500)
+            //设置原点
+            cxt.translate(250,250);
+            //表盘(蓝色)
+            cxt.lineWidth = 20;
+            cxt.strokeStyle = "#D78203";
+            cxt.fillStyle = "#EDEAE3";
+            cxt.beginPath();
+            cxt.arc(0,0,200,0,2*Math.PI,false);
+            cxt.stroke();
+            cxt.fill();
+            cxt.closePath();
+            //刻度样式
+            var hour = [12,1,2,3,4,5,6,7,8,9,10,11];
+            for(var i=0; i<60; i++){
+                if(i%5 == 0){
+                    cxt.save();
+                    //填入小时的字体
+                    var x = 160 * Math.cos((i/5*30-90)*Math.PI/180);
+                    var y = 160 * Math.sin((i/5*30-90)*Math.PI/180);
+                    cxt.font = "bold 18px Arial";
+                    cxt.fillStyle = "#000";
+                    cxt.textAlign = "center";
+                    cxt.textBaseline = "middle";
+                    cxt.fillText(hour[i/5],x,y);
+                    //小时的刻度标识
+                    cxt.lineWidth = 8;
+                    cxt.strokeStyle = "#000";
+                    cxt.rotate(i*30*Math.PI/180);
+                    cxt.beginPath();
+                    cxt.moveTo(0,-170);
+                    cxt.lineTo(0,-190);
+                    cxt.closePath();
+                    cxt.stroke();
+                    cxt.restore();
+                }else{
+                    cxt.save();
+                    cxt.lineWidth = 5;
+                    cxt.strokeStyle = "#000";
+                    cxt.rotate(i*6*Math.PI/180);
+                    cxt.beginPath();
+                    cxt.moveTo(0,-180);
+                    cxt.lineTo(0,-190);
+                    cxt.stroke();
+                    cxt.closePath();
+                    cxt.restore();
+                }
+            }
+            //时针样式
+            cxt.save();
+            cxt.lineWidth = 10;
+            cxt.strokeStyle = "#000";
+            cxt.rotate((hours + minute/60) * 30 * Math.PI/180);
+            cxt.beginPath();
+            cxt.moveTo(0,15);
+            cxt.lineTo(0,-80);
+            cxt.stroke();
+            cxt.closePath();
+            cxt.restore();
+            //分针
+            cxt.save();
+            cxt.lineWidth = 7;
+            cxt.strokeStyle = "#000";
+            cxt.rotate((minute + sec/60)*6*Math.PI/180);
+            cxt.beginPath();
+            cxt.moveTo(0,20);
+            cxt.lineTo(0,-130);
+            cxt.closePath();
+            cxt.stroke();
+            cxt.restore();
+            //秒针
+            cxt.save();
+            cxt.lineWidth = 5;
+            cxt.strokeStyle = "#D78203";
+            cxt.rotate(sec*6*Math.PI/180);
+            cxt.beginPath();
+            cxt.moveTo(0,25);
+            cxt.lineTo(0,-160);
+            cxt.closePath();
+            cxt.stroke();
+            cxt.restore();
+            //中心的圆圈
+            cxt.beginPath();
+            var gradient = cxt.createRadialGradient(0,0,1,0,0,6);
+            gradient.addColorStop(0,"#fff");
+            gradient.addColorStop(1,"#615942");
+            cxt.fillStyle = gradient;
+            cxt.arc(0,0,7,0,2*Math.PI,false);
+            cxt.fill();
+            cxt.closePath();
+            //边缘中心的圆圈
+            cxt.save();
+            cxt.fillStyle = "#D78203";
+            cxt.rotate(sec*6*Math.PI/180);
+            cxt.beginPath();
+            cxt.arc(0,-125,8,0,2*Math.PI,false);
+            cxt.fill();
+            cxt.closePath();
+            cxt.restore();
+            //镂空秒针头部的圆圈
+            cxt.save();
+            cxt.fillStyle = "#fff";
+            cxt.rotate(sec*6*Math.PI/180);
+            cxt.beginPath();
+            cxt.arc(0,-125,4,0,2*Math.PI,false);
+            cxt.fill();
+            cxt.closePath();
+            cxt.restore();
+
+            //还原原点
+            cxt.translate(-250,-250);
+        }
+        setInterval(drawClock,1000);
+
+
+
+
+
+
+    </script>
+</html>
